@@ -16,3 +16,9 @@ Primitive.prototype.change = function(val) {
     return this.clone();
   }
 };
+
+Primitive.prototype.toString = function() {
+  return this.value + '';
+};
+
+module.exports = Primitive;
