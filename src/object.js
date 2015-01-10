@@ -77,3 +77,5 @@ var jsonify = function(obj) {
 SObject.prototype.toJSON = function() {
   return jsonify(this.value);
 };
+
+module.exports = SObject;
