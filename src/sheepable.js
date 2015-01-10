@@ -1,3 +1,7 @@
+var isObject = function(obj) {
+  return typeof obj === 'object' && obj !== null;
+};
+
 var Primitive = function(value) {
  Object.defineProperty(this, 'value', {
    value: value,
@@ -20,16 +24,16 @@ Primitive.prototype.change = function(val) {
 
 
 var valTo = function(obj) {
-  if (typeof obj === 'object' && obj !== null) {
-    var retObj = {};
+  if (isObject(obj)) {
+    var result = {};
 
     // TODO: Be more strict here!
 
     Object.keys(obj).forEach(function(propName) {
-      retObj[propName] = valTo(obj[propName]);
+      result[propName] = valTo(obj[propName]);
     });
 
-    return retObj;
+    return result;
   } else {
     return new Primitive(obj);
   }
@@ -44,9 +48,47 @@ var Objector = function(value) {
 };
 
 Objector.prototype.pick = function() {
+  var args = [].slice.call(arguments);
 
+  var obj = {};
+
+  args.forEach(function(name) {
+    var o = this.value[name];
+
+    if (o instanceof Objector) {
+      obj[name] = o.toJSON();
+    } else {
+      obj[name] = o.value;
+    }
+  }, this);
+
+  return new Objector(obj);
 };
 
-Objector.prototype.change = function(property, name) {
+Objector.prototype.change = function(property, value) {
+  var obj = this.toJSON();
 
+  obj[property] = value;
+
+  return new Objector(obj);
+};
+
+var jsonify = function(obj) {
+  var result = {};
+  
+  Object.keys(obj).forEach(function(name) {
+    var o = obj[name];
+
+    if (o instanceof Objector) {
+      result[name] = jsonify(o.value);
+    } else {
+      result[name] = o.value;
+    }
+  });
+  
+  return result;
+};
+
+Objector.prototype.toJSON = function() {
+  return jsonify(this.value);
 };
