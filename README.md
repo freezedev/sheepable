@@ -12,7 +12,7 @@ immutable-js provides high-level classes like Map, List, etc. Sheepable provides
 ## Changing a value
 Any Sheepable instance has a `change` method to change a value:
 
-```
+```javascript
 var pri = new Sheepable.Primitive('hello');
 console.log(pri.value); //< "hello"
 var newPri = pri.change('goodbye');
